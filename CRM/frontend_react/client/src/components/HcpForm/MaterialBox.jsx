@@ -106,53 +106,6 @@ export default MaterialsSection;
 
 
 
-// function MaterialsSection({ formData }) {
-
-//     return (
-
-//         <div className="border rounded-lg p-4">
-
-//             <h3 className="font-semibold mb-3">
-//                 Materials Shared
-//             </h3>
-
-
-//             {
-//                 formData.materialsShared?.length === 0 ? (
-
-//                     <p className="text-gray-500 italic text-sm">
-//                        materials
-//                     </p>
-
-//                 ) : (
-
-//                     <ul className="list-disc ml-5 space-y-1">
-
-//                         {
-//                             formData.materialsShared.map(
-//                                 (material,index)=>(
-//                                     <li key={index}>
-//                                         {material}
-//                                     </li>
-//                                 )
-//                             )
-//                         }
-
-//                     </ul>
-
-//                 )
-//             }
-
-//         </div>
-
-//     );
-// }
-
-// export default MaterialsSection;
-
-
-
-
 
 
 
