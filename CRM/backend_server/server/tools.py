@@ -25,11 +25,18 @@ def interaction_tool(
     materials: Optional[List[str]] = None,
 ):
     """
-    Log a new HCP interaction that has already occurred or is currently happening.
-    Use ONLY for recording a completed meeting or discussion, saving topics,
-    materials, or HCP sentiment. Do NOT use for future appointments — use
-    follow_up_tool for that.
+    Log a NEW HCP interaction that already happened or is currently
+    happening. attendees, topics, and materials must be arrays, never
+    comma-joined strings.
+
+    Do NOT use this if a "Current logged interaction data" state is
+    already shown for this HCP and the user wants to change any of its
+    fields — that is an edit; call edit_log_tool instead.
+    Do NOT use for future/scheduled meetings — use follow_up_tool.
+    Only call this when the user's current message describes a
+    completed or in-progress meeting.
     """
+
     print("Interaction tool called")
     result = Interaction_details(
         hcp_name, interactionType, meeting_date, meeting_time,
@@ -82,19 +89,22 @@ def edit_log_tool(
     materials: Optional[List[str]] = None,
 ):
     """
-    Update an existing HCP interaction. Use when the user wants to modify
-    saved interaction data.
+    Update an EXISTING logged HCP interaction. Use hcp_id from current
+    state when available (most reliable); fall back to hcp_name only if
+    no hcp_id is shown. hcp_name here means "whose record to edit," not
+    a rename field — for an actual rename, pass the NEW name as hcp_name
+    and still locate the record via hcp_id.
 
-    Identify the interaction using hcp_id when it is known (from the
-    current logged interaction data shown to you) — this is the reliable
-    identifier. Only fall back to hcp_name when no hcp_id is available.
+    Update only fields the user explicitly mentioned. Never invent values.
 
-    hcp_name here always means "the HCP this edit applies to." If the
-    user wants to rename the HCP on file, pass the NEW name as hcp_name
-    and rely on hcp_id (not the old name) to locate the record.
-
-    Update only fields provided by the user.
+    Do NOT call this just because interaction/follow-up/CRM-history state
+    is visible to you — only call it when the user's CURRENT message
+    explicitly asks to change, correct, update, or fix a field.
+    Never call this for a question about an uploaded document's content —
+    use write_query_tool for that instead, even if a topic name overlaps
+    with existing state.
     """
+
     print("edit tool called")
     result = edit_log_info(
         hcp_id=hcp_id,
@@ -143,11 +153,20 @@ def edit_log_tool(
 
 @tool
 def search_history_tool(hcp_name: str, tool_call_id: Annotated[str, InjectedToolCallId]):
+
     """
-    Use only when the user explicitly asks about past/previous CRM interactions:
-    previous meetings, discussions, materials shared, sentiment history.
-    Return CRM data only. Do not invent information.
+    Look up PAST CRM interactions/meeting history for an HCP. Use ONLY
+    when the user's current message explicitly asks about previous
+    meetings, past discussions, or interaction history (e.g. "what did
+    we discuss before", "past visits").
+
+    Do NOT call this automatically after another tool (edit_log_tool,
+    follow_up_tool, interaction_tool) just ran — a prior tool succeeding
+    is never itself a reason to also fetch history.
+    Do NOT call this for document/PDF content questions — use
+    write_query_tool for those instead.
     """
+     
     db = None
     print("search history entered")
     try:
@@ -188,8 +207,9 @@ def search_history_tool(hcp_name: str, tool_call_id: Annotated[str, InjectedTool
 @tool
 def upload_file_tool(pdf_path: str, tool_call_id: Annotated[str, InjectedToolCallId]):
     """
-    Process an uploaded pharmaceutical document. Use ONLY when a real file
-    is uploaded by the user. Never create fake file paths.
+    Process a file the user actually just uploaded/attached. Never invent
+    or guess a file path. Do not answer questions about the file's
+    content here — that happens via write_query_tool once the user asks.
     """
     print("upload file entered")
 
@@ -216,9 +236,15 @@ def upload_file_tool(pdf_path: str, tool_call_id: Annotated[str, InjectedToolCal
 @tool
 def write_query_tool(question: str, tool_call_id: Annotated[str, InjectedToolCallId]):
     """
-    Answer questions using uploaded documents: dosage, contraindications,
-    indications, adverse effects, summary.
-    Answer only from retrieved documents.
+    Answer a question about the CONTENT of an uploaded document — dosage,
+    contraindications, indications, adverse effects, a summary/explanation
+    of the file. Answer only from retrieved document content, never from
+    general knowledge.
+
+    Use this whenever the user's current message is about what a file/PDF
+    says, means, or contains — even if a topic name in the question also
+    appears in existing form/followUp/outcome state. A document question
+    is never an edit and never a history lookup.
     """
     print("write query entered")
     result = query_service(question)
@@ -246,9 +272,15 @@ def follow_up_tool(
     purpose: str = "",
 ):
     """
-    Schedule a new future follow-up appointment. Use only when the user
-    explicitly requests scheduling a future appointment. This tool cannot
-    look up, modify, or cancel an existing follow-up.
+    Schedule a NEW future follow-up appointment. Use ONLY when the user's
+    current message explicitly requests scheduling/booking/planning a
+    future meeting. Cannot look up, modify, reschedule, or cancel an
+    existing follow-up — if asked to do any of those, do not call this
+    tool; tell the user that isn't supported yet.
+
+    Never use for a completed/in-progress meeting — use interaction_tool.
+    Do not call search_history_tool or any other tool alongside this one
+    unless the user separately asked for that too.
     """
     db = next(get_db())
     try:

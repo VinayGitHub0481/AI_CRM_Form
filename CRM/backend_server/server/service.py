@@ -6,7 +6,6 @@ from typing import List, Optional
 import logging
 from sqlalchemy.orm import Session
 
-
 Base.metadata.create_all(bind=engine)
 
 logging.basicConfig(level=logging.INFO)

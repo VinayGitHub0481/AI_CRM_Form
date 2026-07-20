@@ -9,6 +9,12 @@ import shutil
 from langchain_core.messages import HumanMessage
 from fastapi.middleware.cors import CORSMiddleware
 import os 
+import logging 
+
+
+logging.basicConfig(level=logging.DEBUG)
+log=logging.getLogger(__name__)
+
 
 app=FastAPI()
 
@@ -48,31 +54,43 @@ async def user_input(user_request:ChatRequest):
             "messages":[
                 HumanMessage(content=user_request.user_query) 
             ],
-            "form":{},
-
-            "outcome": "",
-
-            "summary":"",
-
-            "followUp": {}
-
         },
         config=config,
     )
     
-    print(result["form"])
-    print("\n========== FINAL MESSAGES ==========")
+    # print(result.get("form"))
+    # print("\n========== FINAL MESSAGES ==========")
 
-    for i, msg in enumerate(result["messages"]):
-        print(f"\nMESSAGE {i}")
-        print("TYPE:", type(msg).__name__)
-        print("CONTENT:", repr(msg.content))
-        print("TOOL CALLS:", getattr(msg, "tool_calls", None))
+    # for i, msg in enumerate(result["messages"]):
+    #     print(f"\nMESSAGE {i}")
+    #     print("TYPE:", type(msg).__name__)
+    #     print("CONTENT:", repr(msg.content))
+    #     print("TOOL CALLS:", getattr(msg, "tool_calls", None))
 
-    print("====================================\n")
-    print(result["outcome"])
-    print(result["followUp"])
-    print(result["summary"])
+    # print("====================================\n")
+    # print(result.get("outcome"))
+    # print(result.get("followUp"))
+    # print(result.get("summary"))
+
+    log.debug("result %s",result.get("form",{}))
+    log.debug("summary %s",result.get("summary",""))
+    log.debug("outcome %s",result.get("outcome",""))
+    log.debug("followUp %s",result.get("followUp",{}))
+
+    for i ,msg in enumerate(result["messages"]):
+        # log.info("message at %d",i)
+        # log.info("msg type %s",type(msg).__name__)
+        # log.info("msg content %s",msg.content)
+
+        log.debug(
+           ( "message index=%d , type=%s, content=%s tool_calls=%s",
+            i,
+            type(msg).__name__,
+            msg.content,
+            getattr(msg,"tool_calls",None),
+           )
+            
+            )
 
     return {
         "chat_response":result["messages"][-1].content,  #here last message will be shown as response
