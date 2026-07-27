@@ -6,6 +6,8 @@ load_dotenv()
 import os 
 
 url=os.getenv("DB_URL")
+
+
 print("db url",repr(url))
 
 engine=create_engine(url,echo=True)
