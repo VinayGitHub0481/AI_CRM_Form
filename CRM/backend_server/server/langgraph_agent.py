@@ -69,14 +69,6 @@ tools = [
 #   llm_with_tools -> used ONLY by the "agent" (decide) node.
 #   llm            -> used ONLY by the "responder" (narrate) node,
 #                      with NO tools bound.
-#
-# Previously, one node did both jobs with tools always bound, so after
-# a tool ran, the model came back into a state where it still had every
-# tool available and would frequently call another one instead of just
-# answering — that's why you were seeing repeated / wrong tool calls
-# and extra round-trips (= latency). Removing tool-binding at the
-# narration step makes that failure mode structurally impossible,
-# instead of relying on prompt wording to discourage it.
 # ---------------------------------------------------------------------
 llm_with_tools = llm.bind_tools(tools)
 

@@ -58,19 +58,6 @@ async def user_input(user_request:ChatRequest):
         config=config,
     )
     
-    # print(result.get("form"))
-    # print("\n========== FINAL MESSAGES ==========")
-
-    # for i, msg in enumerate(result["messages"]):
-    #     print(f"\nMESSAGE {i}")
-    #     print("TYPE:", type(msg).__name__)
-    #     print("CONTENT:", repr(msg.content))
-    #     print("TOOL CALLS:", getattr(msg, "tool_calls", None))
-
-    # print("====================================\n")
-    # print(result.get("outcome"))
-    # print(result.get("followUp"))
-    # print(result.get("summary"))
 
     log.debug("result %s",result.get("form",{}))
     log.debug("summary %s",result.get("summary",""))

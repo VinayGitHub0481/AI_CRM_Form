@@ -23,6 +23,8 @@ function Chatbot({ updateFromAI }) {
 
   const bottomRef = useRef(null);
 
+  const API_BASE_URL=import.meta.env.VITE_API_URL || "http://localhost:8000"
+
   // Replace with logged-in user's ID later
   const USER_ID = 1;
 
@@ -54,7 +56,7 @@ function Chatbot({ updateFromAI }) {
   try {
 
     const response = await axios.post(  /* here through this axios ,request sends to the backend llm model through  the api */
-      "http://localhost:8000/chat",
+      `${API_BASE_URL}/chat`,
       {
         user_id: USER_ID,
         user_query: currentMessage,
@@ -125,13 +127,8 @@ const handleFileUpload = async (e) => {
     formData.append("user_id", USER_ID);
 
     const response = await axios.post(
-      "http://localhost:8000/upload",
+      `${API_BASE_URL}/upload`,
       formData,
-      // {
-      //   headers: {
-      //     "Content-Type": "multipart/form-data",
-      //   },
-      // }
     );
 
     const aiText =
