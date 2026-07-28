@@ -15,10 +15,7 @@ QURL=os.getenv("QCLIENT")
 import os
 from qdrant_client import QdrantClient
 
-# client1 = QdrantClient(
-#     url=os.environ["QDRANT_URL"],
-#     api_key=os.environ["QDRANT_API_KEY"],
-# )
+
 
 COLLECTION_NAME="materials"
 
@@ -51,7 +48,6 @@ def query_service(user_query: str):
     # Connect to existing Qdrant collection
     vector_store = QdrantVectorStore.from_existing_collection(
         embedding=embedding_model,
-        #client=client1,
         url=QURL,
         collection_name=COLLECTION_NAME
     )
