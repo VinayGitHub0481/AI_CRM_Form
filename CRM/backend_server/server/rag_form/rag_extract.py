@@ -10,15 +10,15 @@ import os
 
 client = OpenAI()
 
-#QURL=os.getenv("QCLIENT")
+QURL=os.getenv("QCLIENT")
 
 import os
 from qdrant_client import QdrantClient
 
-client1 = QdrantClient(
-    url=os.environ["QDRANT_URL"],
-    api_key=os.environ["QDRANT_API_KEY"],
-)
+# client1 = QdrantClient(
+#     url=os.environ["QDRANT_URL"],
+#     api_key=os.environ["QDRANT_API_KEY"],
+# )
 
 COLLECTION_NAME="materials"
 
@@ -31,7 +31,7 @@ embedding_model = OpenAIEmbeddings(
 
 def query_service(user_query: str):
 
-    q_client=client1
+    q_client=QdrantClient(url=QURL)
 
     #q_client.delete_collection(collection_name="materials")
 
@@ -51,7 +51,8 @@ def query_service(user_query: str):
     # Connect to existing Qdrant collection
     vector_store = QdrantVectorStore.from_existing_collection(
         embedding=embedding_model,
-        client=client1,
+        #client=client1,
+        url=QURL,
         collection_name=COLLECTION_NAME
     )
 
