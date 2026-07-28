@@ -6,19 +6,9 @@ from langchain_community.document_loaders import PyPDFLoader
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_qdrant import QdrantVectorStore
-
 import os 
 
 QURL=os.getenv("QCLIENT")
-
-import os
-
-#from qdrant_client import QdrantClient
-
-# client = QdrantClient(
-#     url=os.environ["QDRANT_URL"],
-#     api_key=os.environ["QDRANT_API_KEY"],
-# )
 
 COLLECTION_NAME = "materials"
 
@@ -52,7 +42,6 @@ def upload_material(pdf_path: str):
         documents=chunks,
         embedding=embedding,
         url=QURL,
-        #client=client,
         collection_name=COLLECTION_NAME,
     )
 
@@ -60,52 +49,6 @@ def upload_material(pdf_path: str):
         "status":True,
         "materialsShared": pdf_file.name
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
