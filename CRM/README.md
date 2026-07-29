@@ -31,26 +31,6 @@ All of it flows into a live **form state** your frontend can read in real time �
 
 ---
 
-## 🗂️ Project Structure
-
-```
-server/
- ├── 🧩 langgraph_agent.py   → graph wiring, state, routing logic
- ├── 🛠️ tools.py             → the 6 tools the agent can call
- ├── 🗄️ service.py           → database read/write logic
- ├── 📆 validatedt.py        → date & time parsing/validation
- ├── 💬 prompts.py           → the system prompt
- └── rag_form/
-      ├── rag_service.py    → document ingestion
-      └── rag_extract.py    → document Q&A (RAG)
-
-db/
- ├── database.py            → DB engine & session
- └── models.py               → Interaction_data, Follow_Up tables
-```
-
----
-
 ## ⚙️ Setup
 
 ```bash
@@ -65,12 +45,6 @@ pip install langgraph langchain-groq langchain-core python-dotenv \
 # 3️⃣ Add your .env file 
 
 # 4️⃣ Make sure MySQL + MongoDB are running
-```
-
-**`.env` file:**
-```env
-API_KEY=your_groq_api_key
-MONGO_DB_URL=mongodb://localhost:27017
 ```
 
 ---
@@ -99,7 +73,7 @@ form_data = snapshot.values.get("form", {})
 
 ---
 
-## 🛠️ Tools at a Glance
+## 🛠️ Tools 
 
 | Tool | Purpose | Key Notes |
 |---|---|---|
@@ -112,7 +86,7 @@ form_data = snapshot.values.get("form", {})
 
 ---
 
-## 📋 State at a Glance
+## 📋 State 
 
 **`form`** →
 - `hcpId` · `hcpName` · `interactionType` · `date` · `time`
@@ -125,7 +99,7 @@ form_data = snapshot.values.get("form", {})
 
 ---
 
-## 🎯 Key Design Choices
+## 🎯 Key Design 
 
 - ✅ Tools write **directly to state** via `Command` — no JSON-in-message parsing
 - ✅ Agent always gets a turn **after** a tool call, so replies are natural, not raw tool output
