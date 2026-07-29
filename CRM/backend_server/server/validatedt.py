@@ -39,14 +39,3 @@ def validate_date_time(
         final_time = parsed_time.time()
 
     return final_date, final_time
-
-
-
-
-
-
-
-
-
-#     return {}
-
